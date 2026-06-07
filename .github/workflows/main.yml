@@ -19,7 +19,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.9
+      - name: Show files
+        run: |
+          echo "当前目录："
+          pwd
+          echo "文件列表："
+          ls -la
+          echo ".github/workflows 文件："
+          ls -la .github/workflows || true
+          echo "main.py 前20行："
+          sed -n '1,20p' main.py || true
+          echo "config.txt 前30行："
+          sed -n '1,30p' config.txt || true
+
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
@@ -31,4 +44,4 @@ jobs:
 
       - name: Run weixin push
         run: |
-          python3 main.py
+          python3 -u main.py
