@@ -1,35 +1,34 @@
-name: WeChat Night Push
+name: weixin
 
 on:
-  schedule:
-    # GitHub Actions 的 cron 使用 UTC 时间。
-    # 北京时间/菲律宾时间 22:00 = UTC 14:00
-    - cron: "0 14 * * *"
   workflow_dispatch:
+  schedule:
+    # GitHub Actions 使用 UTC 时间
+    # 北京时间晚上10点 = UTC 下午2点
+    - cron: '0 14 * * *'
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  TZ: Asia/Shanghai
 
 jobs:
-  push:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.9'
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - name: Install pip packages
+        run: |
+          python -m pip install --upgrade pip
+          pip3 install -r requirements.txt
 
-      - name: Run WeChat night push
-        env:
-          WECHAT_APP_ID: ${{ secrets.WECHAT_APP_ID }}
-          WECHAT_APP_SECRET: ${{ secrets.WECHAT_APP_SECRET }}
-          WECHAT_TEMPLATE_ID: ${{ secrets.WECHAT_TEMPLATE_ID }}
-          WECHAT_USER_OPENIDS: ${{ secrets.WECHAT_USER_OPENIDS }}
-          QWEATHER_KEY: ${{ secrets.QWEATHER_KEY }}
-          REGION: "长沙市"
-          RECEIVER_NAME: "苏苏姐"
-        run: python3 main.py
+      - name: Run weixin push
+        run: |
+          python3 main.py
